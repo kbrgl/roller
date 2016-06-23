@@ -1,0 +1,8 @@
+[package]
+name = "roller"
+version = "0.1.0"
+authors = ["Kabir Goel <kabirgoel.kg@gmail.com>"]
+
+[dependencies]
+clap = "2"
+simple-signal = "1"
