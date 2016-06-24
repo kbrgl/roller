@@ -5,7 +5,6 @@ Its primary use case lies with window managers, GUIs and TUIs where screen real 
 
 Roller has been built with sane defaults and it is incredibly easy to get started. An example:
 
-Here's a simple example
 ```sh
 # xtitle is a command line utility that gets the title of the currently focused window from your desktop environment or window manager. The -s flag causes it to stream the window titles - whenever the active window changes, it outputs the new title
 # lemonbar is a simple program for rendering a status bar / panel on your display - it is commonly used with window managers like i3 and bspwm
