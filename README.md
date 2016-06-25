@@ -1,15 +1,15 @@
 # Description
-Roller is a simple yet incredibly robust text truncation utility written in Rust.
+Roller is a simple yet robust text truncation utility written in Rust.
 
-Its primary use case lies with window managers, GUIs and TUIs where screen real estate is limited and it is useful to truncate text to fully utilise available space.
-
-Roller has been built with sane defaults and it is incredibly easy to get started. An example:
+It's really easy to use. Here's an example:
 
 ```sh
-# xtitle is a command line utility that gets the title of the currently focused window from your desktop environment or window manager. The -s flag causes it to stream the window titles - whenever the active window changes, it outputs the new title
-# lemonbar is a simple program for rendering a status bar / panel on your display - it is commonly used with window managers like i3 and bspwm
 xtitle -s | roller | lemonbar
 ```
+
+-   xtitle outputs the current window title
+-   lemonbar generates a status bar on the top of the screen
+
 
 # Installation
 Roller requires Rust and its package manager, Cargo. Once you have these installed:
@@ -22,6 +22,7 @@ sudo ln -s ./target/release/roller /usr/bin/roller
 ```
 
 ## Installing Rust and Cargo
+
 ### Arch
 ```sh
 sudo pacman -S rust cargo
@@ -31,6 +32,7 @@ sudo pacman -S rust cargo
 ```sh
 sudo apt install rust cargo
 ```
+
 
 # Usage
 ```
@@ -56,65 +58,85 @@ OPTIONS:
     -t, --truncate <LENGTH>        Only roll if text is longer than LENGTH, effectively truncating it
 ```
 
+
 # Examples
+
 ## Count
-The `-c 5` option specifies that 5 permutations should be made. In its absence, an infinite number of permutations would be made so the text would be scrolling indefinitely.
 ```sh
-$ echo 'Gumby' | roller -c 5
-umby G
-mby Gu
-by Gum
-y Gumb
- Gumby
+$ echo 'Rust' | roller -c 5
+Rust 
+ust R
+st Ru
+t Rus
+ Rust
 ```
 
 ## Fresh input on stdin
 By default, Roller will refresh if there is any new input on stdin.
+
 ```sh
 $ xtitle -s | roller
-~/Code/scroller | nvim 
-/Code/scroller | nvim $
-Code/scroller | nvim $/
-ode/scroller | nvim $/C
-# now, I switch to another window. this causes xtitle to output a new line of text. scroller picks up this new line of text.
+~/Code/roller | nvim 
+/Code/roller | nvim $
+Code/roller | nvim $/
+ode/roller | nvim $/C
 ~ | fish 
  | fish ~
 | fish ~ 
 ```
 
+-   Before the first '~ | fish', I change my currently active window. `xtitle` outputs the new window title and outputs it. Roller picks up the change.
+
 ## Truncate
-The `-t 5` option means "if the text is less than 5 characters long then do not scroll it". This option is immensely useful if you want to make sure the text does not exceed a certain length.
+This option is useful if you want to make sure that the text does not exceed a certain length
 ```sh
-$ echo 'John' | scroller -n -c 3 -l 5
-John
-John
-John
+$ echo 'Rust' | roller -c 5 -t 5
+Rust 
+Rust 
+Rust 
+Rust 
+Rust 
 ```
 
+Same options, different text:
+
+```sh
+$ echo 'Rusty.' | roller -c 5 -t 5
+Rusty
+usty.
+sty. 
+ty. R
+y. Ru
+```
+
+-   The `-t` flag causes text to be 'truncated' at a certain length. This means that if the text exceeds that length then it is scrolled and truncated at given length, otherwise it is neither scrolled nor truncated.
 
 ## Separator
-The `-s ' -- '` option means "after the entire string has been displayed, separate the end of the string and the start of string with ' -- '.
+
 ```sh
-$ echo 'John' | scroller -n -c 3 -s ' -- '
-ohn -- J
-hn -- Jo
-n -- Joh
-```
-By default, the separator is a single space. If the default separator was an empty string (''), the output would look like the following:
-```
-ohnJ
-hnJo
-nJoh
+$ echo 'Rust' | roller -c 3 -s ' -- '
+Rust -- 
+ust -- R
+st -- Ru
 ```
 
-## Prefix and postfix
-The `-a ' -- ' -b ' .. '` specify a prefix and postfix for the text
-```sh
-$ echo 'hello, world' | roller -a ' -- ' -b ' .. '
- .. hello, world  -- 
- .. ello, world h -- 
- .. llo, world he -- 
+By default, the separator is a single space. If the default separator was an empty string (''), the output would look like the following:
+
 ```
+Rust
+ustR
+stRu
+```
+
+## Static prefix and postfix
+
+```sh
+$ echo 'Rust' | roller -a ' -- ' -b ' .. '
+ .. Rust  -- 
+ .. ust R -- 
+ .. st Ru -- 
+```
+
 
 # License
 Roller is open source software licensed under the terms of the MIT license.
