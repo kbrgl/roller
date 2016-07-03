@@ -72,8 +72,6 @@ fn open_loop(interval: time::Duration,
         loop {
             match input() {
                 Ok(val) => {
-                    let mut val = val.clone();
-                    val.push_str(&separator);
                     tx.send(val).unwrap();
                 },
                 Err(_) => break
@@ -84,13 +82,20 @@ fn open_loop(interval: time::Duration,
     let mut string = String::new();
     let mut i: f64 = 0f64;
     while i < count {
-        thread::sleep(interval);
-
-        if truncate && truncate_len >= string.len() {
-            string = rx.try_recv().unwrap_or(string);
-        } else {
-            string = rx.try_recv().unwrap_or(roll1(string, reverse));
+        match rx.try_recv() {
+            Ok(val) => {
+                string = val;
+                if (truncate && truncate_len < string.len()) || !truncate {
+                        string.push_str(&separator);
+                }
+            },
+            Err(_) => {
+                if (truncate && truncate_len < string.len()) || !truncate {
+                        string = roll1(string, reverse);
+                }
+            },
         }
+
         let mut modified_string = string.clone();
 
         if truncate {
@@ -105,6 +110,7 @@ fn open_loop(interval: time::Duration,
         }
 
         i += 1f64;
+        thread::sleep(interval);
     }
 
     inp_thread.join().unwrap();
@@ -112,7 +118,7 @@ fn open_loop(interval: time::Duration,
 
 fn main() {
     let args = App::new("Roller")
-        .version("1.0.0")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("Kabir Goel <kabirgoel.kg@gmail.com>")
         .about("Truncate text by rolling it like a news ticker.")
         .arg(Arg::with_name("interval")
