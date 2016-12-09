@@ -2,7 +2,7 @@
 extern crate clap;
 extern crate simple_signal;
 
-use simple_signal::{Signal, Signals};
+use simple_signal::{Signal};
 use clap::{Arg, App};
 use std::f64;
 use std::process;
@@ -179,7 +179,7 @@ fn main() {
     let postfix = String::from(args.value_of("postfix").unwrap_or(""));
     let mutate = args.is_present("mutate");
 
-    Signals::set_handler(&[Signal::Pipe], |_signals| {
+    simple_signal::set_handler(&[Signal::Pipe], |_signals| {
         process::exit(0);
     });
 
